@@ -1,6 +1,6 @@
 # Analýza výkonu týmu Tvoje máma FC (Malý fotbal, Hanspaulská liga)
 
-Tento projekt slouží k analýze výkonu amatérského fotbalového týmu "Tvoje máma FC", který se účastní pražské **Hanspaulské ligy**. Projekt zahrnuje **web scraping** historických dat (2015–2024), jejich **čištění**, **vizualizaci**, a přípravu datasetu vhodného pro analýzu.
+Tento projekt slouží k analýze výkonu amatérského fotbalového týmu "Tvoje máma FC", který se účastní pražské **Hanspaulské ligy**. Projekt zahrnuje **web scraping** historických dat (2015–2026), jejich **čištění**, **vizualizaci**, a přípravu datasetu vhodného pro analýzu.
 
 ---
 
@@ -11,7 +11,7 @@ Tento projekt slouží k analýze výkonu amatérského fotbalového týmu "Tvoj
 ├── data/                  # JSON soubory se sezónními statistikami
 │   └── tvoje_mama_combined.json
 ├── scripts/
-│   ├── finale.py          # Hlavní scraper pro sezóny 2015–2024
+│   ├── finale.py          # Hlavní scraper (2015–současnost)
 │   ├── Test_2018.py       # Speciální řešení pro problémovou sezónu 2018 jaro
 │   ├── combine_jsons.py   # Spojení jednotlivých JSONů do jednoho
 │   ├── main.py            # Analýza a vizualizace (grafy, heatmapy)
@@ -39,10 +39,10 @@ pip install -r requirements.txt
 
 ## Co skripty dělají?
 
-### 1. `finale.py`  
+### 1. `finale.py`
 Hlavní scraper:
 - Prochází oficiální stránku [psmf.cz/souteze](https://www.psmf.cz/souteze/)
-- Hledá odkazy pro sezóny 2015–2024
+- Hledá odkazy pro sezóny 2015–současnost (rok se načítá dynamicky)
 - Vyhledá tým **"Tvoje máma FC"** pouze ve 6.–8. lize
 - Stáhne detailní stránku týmu
 - Extrahuje data: zápasy, tabulky, statistiky
@@ -71,8 +71,24 @@ Rozšířená vizualizace:
 
 ## Výstupy
 
-- 📁 `data/tvoje_mama_combined.json` — hlavní datový soubor - obsahuje kompletní json sezón 2015-2024
-> 🗣️ *„Čím víc gólů dáme, tím víc bodů máme.“* — Ludvík Hovorka, Okresní přebor
+![Graf hráčů](assets/graf_hracu.png)
+
+![Heatmapa gólů](assets/heatmapa.png)
+
+- 📁 `data/tvoje_mama_combined.json` — hlavní datový soubor - obsahuje kompletní json sezón 2015-2026
+
+> Data stažena: 25. 3. 2026
+> 🗣️ *„Čím víc gólů dáme, tím víc bodů máme.”* — Ludvík Hovorka, Okresní přebor
+
+## Changelog
+
+### Refaktoring (březen 2026)
+- **main.py** — kód zabalený do funkcí, oprava bugů s nulovými hodnotami, absolutní cesta k datům
+- **Test_2018.py** — odstraněn duplicitní kód, funkce importovány z `finale.py`
+- **finale.py** — horní hranice roku nahrazena dynamickým `date.today().year` (automaticky pokrývá nové sezóny)
+- **requirements.txt** — doplněna chybějící závislost `seaborn`
+- **.gitignore** — přidáno ignorování `.venv/`, `__pycache__/` a sezónních JSONů
+- **assets/** — přidány screenshoty grafů pro náhled v README
 
 ## Možnosti rozšíření
 
