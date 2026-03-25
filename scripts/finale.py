@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
+from datetime import date
 
 BASE_URL = "https://www.psmf.cz"
 LIST_URL = f"{BASE_URL}/souteze/"
@@ -17,7 +18,7 @@ def fetch_soup(url):
         if r.status_code == 200:
             return BeautifulSoup(r.text, "html.parser")
     except Exception as e:
-        print(f"⚠️ Chyba při načítání {url}: {e}")
+        print(f"Chyba při načítání {url}: {e}")
     return None
 
 def parse_table(section, expected_cols):
@@ -101,11 +102,11 @@ def parse_team_details(url, season_label):
     statistiky = parse_statistiky(soup)
 
     if not zapasy:
-        print("   ⚠️ Výsledky nebyly nalezeny.")
+        print("Výsledky nebyly nalezeny.")
     if not tabulka:
-        print("   ⚠️ Tabulka nebyla nalezena.")
+        print("Tabulka nebyla nalezena.")
     if not statistiky:
-        print("   ⚠️ Statistiky nebyly nalezeny.")
+        print("Statistiky nebyly nalezeny.")
 
     return {
         "team_name": TEAM_NAME,
@@ -117,10 +118,10 @@ def parse_team_details(url, season_label):
     }
 
 def process_season(season_url, season_year, season_name):
-    print(f"\n🌐 Sezóna {season_year} {season_name}: {season_url}")
+    print(f"Sezóna {season_year} {season_name}: {season_url}")
     soup = fetch_soup(season_url)
     if not soup:
-        print("❌ Nelze načíst sezónu.")
+        print("Nelze načíst sezónu.")
         return
 
     hrefs = []
@@ -137,7 +138,7 @@ def process_season(season_url, season_year, season_name):
         team_link = soup.find("a", href=re.compile(fr"{TEAM_SLUG}/?$"))
         if team_link:
             team_url = f"{BASE_URL}{team_link['href']}"
-            print(f"✅ Nalezen tým: {TEAM_NAME} -> {team_url}")
+            print(f"Nalezen tým: {TEAM_NAME} -> {team_url}")
             print("   🔍 Zpracovávám detail týmu...")
             data = parse_team_details(team_url, f"{season_year} {season_name}")
             if data:
@@ -150,7 +151,7 @@ def process_season(season_url, season_year, season_name):
 def main():
     soup = fetch_soup(LIST_URL)
     if not soup:
-        print("❌ Nelze načíst hlavní stránku.")
+        print("Nelze načíst hlavní stránku.")
         return
 
     components = [c for c in soup.select(".component__wrap") if "Hanspaulská liga" in c.get_text()]
@@ -162,7 +163,7 @@ def main():
             match = year_pattern.search(href)
             if match:
                 year = int(match.group(1))
-                if 2015 <= year <= 2024:
+                if 2015 <= year <= date.today().year:
                     full_url = f"{BASE_URL}{href}"
                     season_name = "jaro" if "jaro" in href else "podzim"
                     competition_links.append((full_url, year, season_name))
